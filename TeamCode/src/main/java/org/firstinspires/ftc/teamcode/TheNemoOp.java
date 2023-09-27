@@ -25,10 +25,10 @@ public class TheNemoOp extends LinearOpMode {
         imu.init();
 
 
-        Motor frontLeftMotor = new Motor (hardwareMap, "frontLeft");
-        Motor frontRightMotor = new Motor (hardwareMap, "frontRight");
-        Motor backLeftMotor = new Motor (hardwareMap, "backLeft");
-        Motor backRightMotor = new Motor (hardwareMap, "backRight");
+        Motor frontLeftMotor = new Motor (hardwareMap, "fl");
+        Motor frontRightMotor = new Motor (hardwareMap, "fr");
+        Motor backLeftMotor = new Motor (hardwareMap, "bl");
+        Motor backRightMotor = new Motor (hardwareMap, "br");
 
         MecanumDrive driveBase = new MecanumDrive (frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
 
