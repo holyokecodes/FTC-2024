@@ -23,53 +23,56 @@ public class TheNemoOp extends LinearOpMode {
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        //set up revIMU
         RevIMU imu = new RevIMU(hardwareMap);
         imu.init();
 
-
+        //set up motors
         Motor frontLeftMotor = new Motor (hardwareMap, "fl");
         Motor frontRightMotor = new Motor (hardwareMap, "fr");
         Motor backLeftMotor = new Motor (hardwareMap, "bl");
         Motor backRightMotor = new Motor (hardwareMap, "br");
         Motor armSwinger = new Motor(hardwareMap, "armswinger");
 
-        //SET THESE!!!!
-        int targetPosition = 0;
+        //variables SET THESE!!!!
+        int targetPosition = 0;  //where the arm starts
         int MAX_ENCODER = 0;
         int MIN_ENCODER = -0;
         int fowardTarget = 0;
         int backwardsTarget = 0;
 
+        double speed;
+
         //after we figure out positions add this line to before the game starts:
         // armSwinger.setTargetPosition(targetPosition);
 
-
-        double speed;
 
         armSwinger.setRunMode(Motor.RunMode.PositionControl);
         armSwinger.setPositionCoefficient(.05);
         armSwinger.setPositionTolerance(3);
         armSwinger.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-
+        //set up mecanum
         MecanumDrive driveBase = new MecanumDrive (frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
 
+        //set up controller
         GamepadEx controller1 = new GamepadEx(gamepad1);
 
+        //set up buttons
         ButtonReader leftBumper = new ButtonReader(controller1, GamepadKeys.Button.LEFT_BUMPER);
         ButtonReader rightBumper = new ButtonReader(controller1, GamepadKeys.Button.RIGHT_BUMPER);
         ButtonReader yButton = new ButtonReader(controller1, GamepadKeys.Button.Y);
         ButtonReader xButton = new ButtonReader(controller1, GamepadKeys.Button.X);
         TriggerReader rightTrigger = new TriggerReader(controller1, GamepadKeys.Trigger.RIGHT_TRIGGER);
 
-        // Wait for the game to start (driver presses PLAY)
+        //wait for the game to start
         waitForStart();
         runtime.reset();
 
-
         armSwinger.resetEncoder();
 
-        // run until the end of the match (driver presses STOP)
+        //run until the end of the match
         while (opModeIsActive()) {
 
             //read buttons
