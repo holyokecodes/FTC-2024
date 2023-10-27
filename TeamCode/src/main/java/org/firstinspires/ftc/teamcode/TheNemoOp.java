@@ -36,6 +36,7 @@ public class TheNemoOp extends LinearOpMode {
         Motor armSwinger = new Motor(hardwareMap, "armswinger");
 
         //variables SET THESE!!!!
+        //add sensor cable
         int targetPosition = 0;  //where the arm starts
         int MAX_ENCODER = 0;
         int MIN_ENCODER = -0;
