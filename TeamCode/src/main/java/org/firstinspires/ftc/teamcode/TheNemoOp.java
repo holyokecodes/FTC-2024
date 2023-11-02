@@ -25,8 +25,8 @@ public class TheNemoOp extends LinearOpMode {
         telemetry.update();
 
         //set up revIMU
-        RevIMU imu = new RevIMU(hardwareMap);
-        imu.init();
+//        RevIMU imu = new RevIMU(hardwareMap);
+//        imu.init();
 
         //set up motors
         Motor frontLeftMotor = new Motor (hardwareMap, "fl");
@@ -43,10 +43,7 @@ public class TheNemoOp extends LinearOpMode {
         int fowardTarget = 0;
         int backwardsTarget = 0;
 
-        double speed;
-
-        //after we figure out positions add this line to before the game starts:
-        // armSwinger.setTargetPosition(targetPosition);
+//        double speed = 1;
 
 
         armSwinger.setRunMode(Motor.RunMode.PositionControl);
@@ -67,6 +64,8 @@ public class TheNemoOp extends LinearOpMode {
         ButtonReader xButton = new ButtonReader(controller1, GamepadKeys.Button.X);
         TriggerReader rightTrigger = new TriggerReader(controller1, GamepadKeys.Trigger.RIGHT_TRIGGER);
 
+        armSwinger.setTargetPosition(targetPosition);
+
         //wait for the game to start
         waitForStart();
         runtime.reset();
@@ -75,6 +74,9 @@ public class TheNemoOp extends LinearOpMode {
 
         //run until the end of the match
         while (opModeIsActive()) {
+
+            telemetry.update();
+
 
             //read buttons
             leftBumper.readValue();
@@ -85,43 +87,43 @@ public class TheNemoOp extends LinearOpMode {
             double strafeSpeed = -controller1.getLeftX();
             double forwardSpeed = -controller1.getLeftY();
             double rotateSpeed =  -controller1.getRightX();
-            double heading = -imu.getRotation2d().getDegrees();
+//          double heading = -imu.getRotation2d().getDegrees();
 
-           //set speed multiplier
-            if(rightTrigger.isDown()) {
-                speed = 0.25;
-            } else {
-                speed = 1.0;
-            }
+//           //set speed multiplier
+//            if(rightTrigger.isDown()) {
+//                speed = 0.25;
+//            } else {
+//                speed = 1.0;
+//            }
 
             //set arm target
             if(leftBumper.isDown()) {
                 // Lower arm target
-                targetPosition += 20 * speed;
+                targetPosition += 20;
             } else if(rightBumper.isDown()) {
                 // Raise arm target
-                targetPosition -= 20 * speed;
+                targetPosition -= 20;
             }
 
-            //set arm target shortcuts
-            if(yButton.isDown()) {
-                targetPosition = fowardTarget;
-            }
-
-            if (xButton.isDown()) {
-                targetPosition = backwardsTarget;
-            }
-
-            //move arm target if out of bounds
-            if(targetPosition > MAX_ENCODER) {
-                targetPosition = MAX_ENCODER;
-            }
-
-            if(targetPosition < MIN_ENCODER) {
-                targetPosition = MIN_ENCODER;
-            }
-
-           //break arm
+//            //set arm target shortcuts
+//            if(yButton.isDown()) {
+//                targetPosition = fowardTarget;
+//            }
+//
+//            if (xButton.isDown()) {
+//                targetPosition = backwardsTarget;
+//            }
+//
+//            //move arm target if out of bounds
+//            if(targetPosition > MAX_ENCODER) {
+//                targetPosition = MAX_ENCODER;
+//            }
+//
+//            if(targetPosition < MIN_ENCODER) {
+//                targetPosition = MIN_ENCODER;
+//            }
+//
+//           //break arm
             if (armSwinger.atTargetPosition()){
                 armSwinger.stopMotor();
             } else {
@@ -130,12 +132,13 @@ public class TheNemoOp extends LinearOpMode {
 
 
             //move robot
-            driveBase.driveFieldCentric(strafeSpeed, forwardSpeed, rotateSpeed,heading, false);
+            driveBase.driveFieldCentric(strafeSpeed, forwardSpeed, rotateSpeed,0, false);
             //move arm
             armSwinger.setTargetPosition(targetPosition);
 
             //telemetry
-            telemetry.addData("Arm Position",armSwinger.getCurrentPosition());
+            telemetry.addData("Arm Position", armSwinger.getCurrentPosition());
+
 
             telemetry.update();
 
