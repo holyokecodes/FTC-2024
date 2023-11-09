@@ -38,10 +38,10 @@ public class TheNemoOp extends LinearOpMode {
         //variables SET THESE!!!!
         //add sensor cable
         int targetPosition = 0;  //where the arm starts
-        int MAX_ENCODER = 0;
-        int MIN_ENCODER = -0;
-        int fowardTarget = 0;
-        int backwardsTarget = 0;
+        int MAX_ENCODER = -200;
+        int MIN_ENCODER = 1;
+        int fowardTarget = 195;
+        int backwardsTarget = 5;
 
 //        double speed = 1;
 
@@ -87,7 +87,7 @@ public class TheNemoOp extends LinearOpMode {
             double strafeSpeed = -controller1.getLeftX();
             double forwardSpeed = -controller1.getLeftY();
             double rotateSpeed =  -controller1.getRightX();
-//          double heading = -imu.getRotation2d().getDegrees();
+//            double heading = -imu.getRotation2d().getDegrees();
 
 //           //set speed multiplier
 //            if(rightTrigger.isDown()) {
@@ -99,22 +99,22 @@ public class TheNemoOp extends LinearOpMode {
             //set arm target
             if(leftBumper.isDown()) {
                 // Lower arm target
-                targetPosition += 20;
+                targetPosition += 5;
             } else if(rightBumper.isDown()) {
                 // Raise arm target
-                targetPosition -= 20;
+                targetPosition -= 5;
             }
 
-//            //set arm target shortcuts
-//            if(yButton.isDown()) {
-//                targetPosition = fowardTarget;
-//            }
-//
-//            if (xButton.isDown()) {
-//                targetPosition = backwardsTarget;
-//            }
-//
-//            //move arm target if out of bounds
+//            set arm target shortcuts
+            if(yButton.isDown()) {
+                targetPosition = -199;
+            }
+
+            if (xButton.isDown()) {
+                targetPosition = 1;
+            }
+
+//            move arm target if out of bounds
 //            if(targetPosition > MAX_ENCODER) {
 //                targetPosition = MAX_ENCODER;
 //            }
@@ -122,13 +122,21 @@ public class TheNemoOp extends LinearOpMode {
 //            if(targetPosition < MIN_ENCODER) {
 //                targetPosition = MIN_ENCODER;
 //            }
-//
+
 //           //break arm
             if (armSwinger.atTargetPosition()){
                 armSwinger.stopMotor();
             } else {
-                armSwinger.set(0.275);
+                armSwinger.set(0.15);
             }
+
+//            if(armSwinger.getCurrentPosition() > 200) {
+//                targetPosition = 199;
+//            }
+//
+//            if(armSwinger.getCurrentPosition() < 0) {
+//                targetPosition = 1;
+//            }
 
 
             //move robot
@@ -138,9 +146,10 @@ public class TheNemoOp extends LinearOpMode {
 
             //telemetry
             telemetry.addData("Arm Position", armSwinger.getCurrentPosition());
-
+            telemetry.addData("Target Position", targetPosition);
 
             telemetry.update();
+
 
         }
     }
