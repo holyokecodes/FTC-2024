@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
-import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -34,9 +35,10 @@ public class TheNemoOp extends LinearOpMode {
         Motor backLeftMotor = new Motor (hardwareMap, "bl");
         Motor backRightMotor = new Motor (hardwareMap, "br");
         Motor armSwinger = new Motor(hardwareMap, "armswinger");
+        Motor airplaneMotor = new Motor(hardwareMap, "airplaneMotor");
 
-        //variables SET THESE!!!!
-        //add sensor cable
+        ServoEx airplaneServo = new SimpleServo(hardwareMap, "airplaneServo", 0, 180);
+
         int targetPosition = 0;  //where the arm starts
         int MAX_ENCODER = -200;
         int MIN_ENCODER = 1;
@@ -51,6 +53,8 @@ public class TheNemoOp extends LinearOpMode {
         armSwinger.setPositionTolerance(3);
         armSwinger.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
+        airplaneMotor.setRunMode(Motor.RunMode.RawPower);
+
         //set up mecanum
         MecanumDrive driveBase = new MecanumDrive (frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
 
@@ -62,6 +66,9 @@ public class TheNemoOp extends LinearOpMode {
         ButtonReader rightBumper = new ButtonReader(controller1, GamepadKeys.Button.RIGHT_BUMPER);
         ButtonReader yButton = new ButtonReader(controller1, GamepadKeys.Button.Y);
         ButtonReader xButton = new ButtonReader(controller1, GamepadKeys.Button.X);
+        ButtonReader bButton = new ButtonReader(controller1, GamepadKeys.Button.B);
+        ButtonReader aButton = new ButtonReader(controller1, GamepadKeys.Button.A);
+
         TriggerReader rightTrigger = new TriggerReader(controller1, GamepadKeys.Trigger.RIGHT_TRIGGER);
 
         armSwinger.setTargetPosition(targetPosition);
@@ -77,7 +84,6 @@ public class TheNemoOp extends LinearOpMode {
 
             telemetry.update();
 
-
             //read buttons
             leftBumper.readValue();
             rightBumper.readValue();
@@ -88,6 +94,16 @@ public class TheNemoOp extends LinearOpMode {
             double forwardSpeed = -controller1.getLeftY();
             double rotateSpeed =  -controller1.getRightX();
 //            double heading = -imu.getRotation2d().getDegrees();
+
+            if(bButton.isDown()){
+                airplaneMotor.set(1.0);
+            }else{
+                airplaneMotor.set(0);
+            }
+
+            if(aButton.isDown()){
+                airplaneServo.turnToAngle(180);
+            }
 
 //           //set speed multiplier
 //            if(rightTrigger.isDown()) {
@@ -123,7 +139,7 @@ public class TheNemoOp extends LinearOpMode {
 //                targetPosition = MIN_ENCODER;
 //            }
 
-//           //break arm
+//           break arm
             if (armSwinger.atTargetPosition()){
                 armSwinger.stopMotor();
             } else {
