@@ -43,11 +43,12 @@ public class TheNemoOp extends LinearOpMode {
         airplaneServo.setInverted(true);
 
         int motorTargetPosition = 0;
-        int handServoTargetPosition = 0;
+        int handServoTargetPosition = 180;
         int handOpenerTargetPosition = 0;
         int forwardTarget = 510;
         int backwardsTarget = 30;
         boolean handOpened = false;
+        boolean handFlipped = false;
 
 
         armSwinger.setRunMode(Motor.RunMode.PositionControl);
@@ -123,23 +124,29 @@ public class TheNemoOp extends LinearOpMode {
                 motorTargetPosition -= 5;
             }
 
-            //arm target shortcuts
-            if(aButton.isDown()) {
-                if (motorTargetPosition == forwardTarget){
-                    motorTargetPosition = backwardsTarget;
+//            //arm target shortcuts
+//            if(aButton.isDown()) {
+//                if (motorTargetPosition == forwardTarget){
+//                    motorTargetPosition = backwardsTarget;
+//                } else {
+//                    motorTargetPosition = forwardTarget;
+//                }
+//
+//            }
+
+            // hand mover
+            if (xButton.isDown()) {
+                if(handFlipped) {
+                    handServoTargetPosition = 0;
+                    handFlipped = false;
                 } else {
-                    motorTargetPosition = forwardTarget;
+                    handServoTargetPosition= 180;
+                    handFlipped = true;
+
                 }
 
             }
 
-            // hand mover auto mover
-            if(motorTargetPosition == forwardTarget) {
-                handServoTargetPosition = 180;
-            } else {
-                handServoTargetPosition = 0;
-            }
-            
             if (bButton.isDown()) {
                 if(handOpened){
                     handOpenerTargetPosition = 0;
@@ -179,6 +186,12 @@ public class TheNemoOp extends LinearOpMode {
             //telemetry
             telemetry.addData("Arm Position", armSwinger.getCurrentPosition());
             telemetry.addData("Arm Target Position", motorTargetPosition);
+            telemetry.addData("Hand Swinger Position:", handRotator.getPosition());
+            telemetry.addData("Hand Swinger Target Position", handServoTargetPosition);
+            telemetry.addData("Hand Opener Position:", handOpener.getPosition());
+            telemetry.addData("Hand Opener Target Position:", handOpenerTargetPosition);
+
+
 
             telemetry.update();
 
