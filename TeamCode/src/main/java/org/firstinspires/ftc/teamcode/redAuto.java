@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-//imports
-
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
 
-public class CreepyMovement3 extends LinearOpMode {
+public class redAuto extends LinearOpMode {
 
     MecanumDrive driveBase;
 
@@ -31,9 +29,8 @@ public class CreepyMovement3 extends LinearOpMode {
         //wait for the game to start
         waitForStart();
         time.reset();
-        
-        driveFoward(2);
 
+        strafeRight(2);
         //stop the robot
         requestOpModeStop();
 
@@ -43,7 +40,7 @@ public class CreepyMovement3 extends LinearOpMode {
     public void driveFoward(double time) {
 
         double strafeSpeed = 0;
-        double fowardSpeed = 1;
+        double fowardSpeed = -1;
         double rotateSpeed = 0;
         double heading = 0;
 
@@ -54,7 +51,7 @@ public class CreepyMovement3 extends LinearOpMode {
     public void strafeLeft(double time) {
 
         double strafeSpeed = 1;
-        double fowardSpeed = .75;
+        double fowardSpeed = -.75;
         double rotateSpeed = 0;
         double heading = 0;
 
@@ -65,7 +62,7 @@ public class CreepyMovement3 extends LinearOpMode {
     public void strafeRight(double time) {
 
         double strafeSpeed = -1;
-        double fowardSpeed = .7;
+        double fowardSpeed = -.7;
         double rotateSpeed = 0;
         double heading = 0;
 
