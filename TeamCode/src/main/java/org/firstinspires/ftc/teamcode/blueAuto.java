@@ -30,7 +30,7 @@ public class blueAuto extends LinearOpMode {
         waitForStart();
         time.reset();
 
-        strafeLeft(2);
+        strafeRight(1);
         //stop the robot
         requestOpModeStop();
 

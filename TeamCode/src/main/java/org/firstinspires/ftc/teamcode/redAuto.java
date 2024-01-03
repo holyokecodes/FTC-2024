@@ -30,7 +30,7 @@ public class redAuto extends LinearOpMode {
         waitForStart();
         time.reset();
 
-        strafeRight(2);
+        strafeLeft(1);
         //stop the robot
         requestOpModeStop();
 
@@ -44,7 +44,7 @@ public class redAuto extends LinearOpMode {
         double rotateSpeed = 0;
         double heading = 0;
 
-        drive(strafeSpeed ,fowardSpeed, rotateSpeed, heading, time);
+        drive(strafeSpeed, fowardSpeed, rotateSpeed, heading, time);
 
     }
 

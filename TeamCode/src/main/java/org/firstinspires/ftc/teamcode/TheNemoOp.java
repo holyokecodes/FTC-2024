@@ -68,16 +68,12 @@ public class TheNemoOp extends LinearOpMode {
         //set up buttons
         ButtonReader leftBumper = new ButtonReader(controller1, GamepadKeys.Button.LEFT_BUMPER);
         ButtonReader rightBumper = new ButtonReader(controller1, GamepadKeys.Button.RIGHT_BUMPER);
-        ButtonReader yButton = new ButtonReader(controller1, GamepadKeys.Button.Y);
         ButtonReader xButton = new ButtonReader(controller1, GamepadKeys.Button.X);
         ButtonReader bButton = new ButtonReader(controller1, GamepadKeys.Button.B);
-        ButtonReader aButton = new ButtonReader(controller1, GamepadKeys.Button.A);
-        ButtonReader leftDPad = new ButtonReader(controller1, GamepadKeys.Button.DPAD_LEFT);
-        ButtonReader rightDPad = new ButtonReader(controller1, GamepadKeys.Button.DPAD_RIGHT);
-        ButtonReader downDPad = new ButtonReader(controller1, GamepadKeys.Button.DPAD_DOWN);
-        ButtonReader upDPad = new ButtonReader(controller1, GamepadKeys.Button.DPAD_UP);
+
 
         TriggerReader rightTrigger = new TriggerReader(controller1, GamepadKeys.Trigger.RIGHT_TRIGGER);
+        TriggerReader leftTrigger = new TriggerReader(controller1, GamepadKeys.Trigger.RIGHT_TRIGGER);
 
         armSwinger.setTargetPosition(motorTargetPosition);
         handRotator.setPosition(handServoTargetPosition);
@@ -97,8 +93,10 @@ public class TheNemoOp extends LinearOpMode {
             leftBumper.readValue();
             rightBumper.readValue();
             rightTrigger.readValue();
-            leftDPad.readValue();
-            rightDPad.readValue();
+            leftTrigger.readValue();
+            bButton.readValue();
+            xButton.readValue();
+
 
             //set movement speed
             double strafeSpeed = -controller1.getLeftX();
@@ -106,13 +104,18 @@ public class TheNemoOp extends LinearOpMode {
             double rotateSpeed =  -controller1.getRightX();
 
 
-            //airplane servo set
+            //airplane servo
             if(rightTrigger.isDown()){
                 airplaneServo.turnToAngle(180);
                 airplaneMotor.set(1.0);
             }
 
-
+            // airplane motor
+            if(leftTrigger.isDown()) {
+                airplaneMotor.set(1.0);
+            } else {
+                airplaneMotor.set(0.0);
+            }
 
 
             //arm mover
@@ -124,15 +127,6 @@ public class TheNemoOp extends LinearOpMode {
                 motorTargetPosition -= 5;
             }
 
-//            //arm target shortcuts
-//            if(aButton.isDown()) {
-//                if (motorTargetPosition == forwardTarget){
-//                    motorTargetPosition = backwardsTarget;
-//                } else {
-//                    motorTargetPosition = forwardTarget;
-//                }
-//
-//            }
 
             // hand mover
             if (xButton.isDown()) {
@@ -142,9 +136,7 @@ public class TheNemoOp extends LinearOpMode {
                 } else {
                     handServoTargetPosition= 180;
                     handFlipped = true;
-
                 }
-
             }
 
             if (bButton.isDown()) {
@@ -156,7 +148,6 @@ public class TheNemoOp extends LinearOpMode {
                     handOpened = true;
                 }
             }
-
 
 
             //motor safety
@@ -175,6 +166,7 @@ public class TheNemoOp extends LinearOpMode {
                 armSwinger.set(0.08);
             }
 
+
             //move robot
             driveBase.driveFieldCentric(strafeSpeed, forwardSpeed, rotateSpeed,0, false);
 
@@ -190,7 +182,6 @@ public class TheNemoOp extends LinearOpMode {
             telemetry.addData("Hand Swinger Target Position", handServoTargetPosition);
             telemetry.addData("Hand Opener Position:", handOpener.getPosition());
             telemetry.addData("Hand Opener Target Position:", handOpenerTargetPosition);
-
 
 
             telemetry.update();
