@@ -51,7 +51,7 @@ public class redAuto extends LinearOpMode {
     public void strafeLeft(double time) {
 
         double strafeSpeed = 1;
-        double fowardSpeed = -.75;
+        double fowardSpeed = -1;
         double rotateSpeed = 0;
         double heading = 0;
 
@@ -62,7 +62,7 @@ public class redAuto extends LinearOpMode {
     public void strafeRight(double time) {
 
         double strafeSpeed = -1;
-        double fowardSpeed = -.7;
+        double fowardSpeed = -1;
         double rotateSpeed = 0;
         double heading = 0;
 

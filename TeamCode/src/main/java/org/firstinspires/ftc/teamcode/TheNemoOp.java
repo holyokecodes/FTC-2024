@@ -33,31 +33,20 @@ public class TheNemoOp extends LinearOpMode {
         Motor frontRightMotor = new Motor (hardwareMap, "fr");
         Motor backLeftMotor = new Motor (hardwareMap, "bl");
         Motor backRightMotor = new Motor (hardwareMap, "br");
-        Motor armSwinger = new Motor(hardwareMap, "armswinger");
-        Motor airplaneMotor = new Motor(hardwareMap, "airplaneMotor");
 
         //set up servos
-        ServoEx handRotator = new SimpleServo(hardwareMap, "handRotator", 0, 180);
-        ServoEx airplaneServo = new SimpleServo(hardwareMap, "airplaneServo", 0, 180);
-        ServoEx handOpener = new SimpleServo(hardwareMap, "handOpener",0, 180);
-        airplaneServo.setInverted(true);
-
-        int motorTargetPosition = 0;
-        int handServoTargetPosition = 180;
-        int handOpenerTargetPosition = 0;
-        int forwardTarget = 510;
-        int backwardsTarget = 30;
-        boolean handOpened = false;
-        boolean handFlipped = false;
+        ServoEx scooperServo = new SimpleServo(hardwareMap, "handRotator", 0, 180);
+        ServoEx armServo = new SimpleServo(hardwareMap, "armServo", 0 , 180);
 
 
-        armSwinger.setRunMode(Motor.RunMode.PositionControl);
-        armSwinger.setPositionCoefficient(.05);
-        armSwinger.setPositionTolerance(3);
-        armSwinger.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        int scooperTargetPosition = 180;
+        int armTargetPosition = 180;
+
+        boolean scooperFlipped = false;
+        boolean armFlipped = false;
 
 
-        airplaneMotor.setRunMode(Motor.RunMode.RawPower);
+//        airplaneMotor.setRunMode(Motor.RunMode.RawPower);
 
         //set up mecanum
         MecanumDrive driveBase = new MecanumDrive (frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
@@ -69,33 +58,27 @@ public class TheNemoOp extends LinearOpMode {
         ButtonReader leftBumper = new ButtonReader(controller1, GamepadKeys.Button.LEFT_BUMPER);
         ButtonReader rightBumper = new ButtonReader(controller1, GamepadKeys.Button.RIGHT_BUMPER);
         ButtonReader xButton = new ButtonReader(controller1, GamepadKeys.Button.X);
-        ButtonReader bButton = new ButtonReader(controller1, GamepadKeys.Button.B);
-
+        ButtonReader yButton = new ButtonReader(controller1, GamepadKeys.Button.Y);
 
         TriggerReader rightTrigger = new TriggerReader(controller1, GamepadKeys.Trigger.RIGHT_TRIGGER);
-        TriggerReader leftTrigger = new TriggerReader(controller1, GamepadKeys.Trigger.RIGHT_TRIGGER);
+        TriggerReader leftTrigger = new TriggerReader(controller1, GamepadKeys.Trigger.LEFT_TRIGGER);
 
-        armSwinger.setTargetPosition(motorTargetPosition);
-        handRotator.setPosition(handServoTargetPosition);
+
+        scooperServo.setPosition(scooperTargetPosition);
 
         //wait for the game to start
         waitForStart();
         runtime.reset();
 
-        armSwinger.resetEncoder();
-
         //run until the end of the match
         while (opModeIsActive()) {
 
-            telemetry.update();
 
             //read buttons
             leftBumper.readValue();
             rightBumper.readValue();
-            rightTrigger.readValue();
-            leftTrigger.readValue();
-            bButton.readValue();
             xButton.readValue();
+            yButton.readValue();
 
 
             //set movement speed
@@ -104,84 +87,49 @@ public class TheNemoOp extends LinearOpMode {
             double rotateSpeed =  -controller1.getRightX();
 
 
-            //airplane servo
-            if(rightTrigger.isDown()){
-                airplaneServo.turnToAngle(180);
-                airplaneMotor.set(1.0);
-            }
-
-            // airplane motor
-            if(leftTrigger.isDown()) {
-                airplaneMotor.set(1.0);
-            } else {
-                airplaneMotor.set(0.0);
-            }
-
-
-            //arm mover
-            if(leftBumper.isDown()) {
-                // Lower arm target
-                motorTargetPosition += 5;
-            } else if(rightBumper.isDown()) {
-                // Raise arm target
-                motorTargetPosition -= 5;
-            }
-
-
-            // hand mover
-            if (xButton.isDown()) {
-                if(handFlipped) {
-                    handServoTargetPosition = 0;
-                    handFlipped = false;
+            // scooper mover
+            if (xButton.wasJustPressed()) {
+                if(scooperFlipped) {
+                    scooperTargetPosition = 0;
+                    scooperFlipped = false;
                 } else {
-                    handServoTargetPosition= 180;
-                    handFlipped = true;
+                    scooperTargetPosition= 180;
+                    scooperFlipped = true;
                 }
             }
 
-            if (bButton.isDown()) {
-                if(handOpened){
-                    handOpenerTargetPosition = 0;
-                    handOpened = false;
+            //  arm mover
+            if (yButton.wasJustPressed()) {
+                if(armFlipped) {
+                    armTargetPosition = 0;
+                    armFlipped = false;
                 } else {
-                    handOpenerTargetPosition = 180;
-                    handOpened = true;
+                    armTargetPosition= 180;
+                    armFlipped = true;
                 }
             }
 
-
-            //motor safety
-            if(motorTargetPosition > forwardTarget) {
-                motorTargetPosition = forwardTarget;
-            }
-
-            if(motorTargetPosition < backwardsTarget) {
-                motorTargetPosition = backwardsTarget;
+            if (rightTrigger.isDown()) {
+                armTargetPosition += 5;
+            } else if (leftTrigger.isDown()) {
+                armTargetPosition -= 5;
             }
 
 
-            if (armSwinger.atTargetPosition()){
-                armSwinger.stopMotor();
-            } else {
-                armSwinger.set(0.08);
-            }
-
-
-            //move robot
+            // move robot
             driveBase.driveFieldCentric(strafeSpeed, forwardSpeed, rotateSpeed,0, false);
 
-            //move arm and hand servo
-            armSwinger.setTargetPosition(motorTargetPosition);
-            handRotator.setPosition(handServoTargetPosition);
-            handOpener.setPosition(handOpenerTargetPosition);
+            scooperServo.setPosition(scooperTargetPosition);
+            armServo.setPosition(armTargetPosition);
 
-            //telemetry
-            telemetry.addData("Arm Position", armSwinger.getCurrentPosition());
-            telemetry.addData("Arm Target Position", motorTargetPosition);
-            telemetry.addData("Hand Swinger Position:", handRotator.getPosition());
-            telemetry.addData("Hand Swinger Target Position", handServoTargetPosition);
-            telemetry.addData("Hand Opener Position:", handOpener.getPosition());
-            telemetry.addData("Hand Opener Target Position:", handOpenerTargetPosition);
+            // telemetry
+//            telemetry.addData("Arm Position", armSwinger.getCurrentPosition());
+//            telemetry.addData("Arm Target Position", motorTargetPosition);
+//            telemetry.addData("Hand Swinger Position:", handRotator.getPosition());
+//            telemetry.addData("Hand Swinger Target Position", handServoTargetPosition);
+//            telemetry.addData("Hand Opener Position:", handOpener.getPosition());
+//            telemetry.addData("Hand Opener Target Position:", handOpenerTargetPosition);
+//            telemetry.addData("position", airplaneServo.getAngle());
 
 
             telemetry.update();
