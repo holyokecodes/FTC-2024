@@ -39,7 +39,7 @@ public class TheNemoOp extends LinearOpMode {
         ServoEx armServo = new SimpleServo(hardwareMap, "armServo", 0 , 180);
 
 
-        int scooperTargetPosition = 180;
+        int scooperTargetPosition = 0;
         int armTargetPosition = 180;
 
         boolean scooperFlipped = false;
@@ -88,7 +88,7 @@ public class TheNemoOp extends LinearOpMode {
 
 
             // scooper mover
-            if (xButton.wasJustPressed()) {
+            if (xButton.wasJustReleased()) {
                 if(scooperFlipped) {
                     scooperTargetPosition = 0;
                     scooperFlipped = false;
@@ -122,14 +122,6 @@ public class TheNemoOp extends LinearOpMode {
             scooperServo.setPosition(scooperTargetPosition);
             armServo.setPosition(armTargetPosition);
 
-            // telemetry
-//            telemetry.addData("Arm Position", armSwinger.getCurrentPosition());
-//            telemetry.addData("Arm Target Position", motorTargetPosition);
-//            telemetry.addData("Hand Swinger Position:", handRotator.getPosition());
-//            telemetry.addData("Hand Swinger Target Position", handServoTargetPosition);
-//            telemetry.addData("Hand Opener Position:", handOpener.getPosition());
-//            telemetry.addData("Hand Opener Target Position:", handOpenerTargetPosition);
-//            telemetry.addData("position", airplaneServo.getAngle());
 
 
             telemetry.update();
